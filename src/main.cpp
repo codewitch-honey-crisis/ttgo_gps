@@ -55,6 +55,7 @@ static void draw_center_text(const char* text, int y, int size=30) {
 
 void setup() {
     Serial.begin(115200);
+    Serial2.begin(9800,SERIAL_8N1,13,-1);
     // init the ttgo
     ttgo_initialize();
     // landscape mode, buttons on right
@@ -67,6 +68,9 @@ void setup() {
     
 }
 void loop() {
+    while(Serial2.available()) {
+        gps.encode((char)Serial2.read());
+    }
     // trivial timer
     uint32_t ms = millis();
     // ten times a second...
