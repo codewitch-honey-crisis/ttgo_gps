@@ -91,7 +91,7 @@ void loop() {
             lcd.dimensions(),
             frame_buffer_data);
         
-        if (gps.location.isValid()) {
+        if (gps.location.isUpdated()) {
             // draw the screen - to the frame buffer
             // clear it
             draw::filled_rectangle(
