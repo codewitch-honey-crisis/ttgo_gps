@@ -79,9 +79,14 @@ void loop() {
     // ten times a second...
     if(ms>ts+100) {
         ts = ms;
-    
-        while(Serial2.available()) {
-            gps.encode((char)Serial2.read());
+        int i = Serial2.read();
+        while(i!=-1) {
+            if(i=='$') {
+                Serial.println();
+            }
+            Serial.print((char)i);
+            gps.encode((char)i);
+            i = Serial2.read();
         }
         
         // finish any pending async draws
