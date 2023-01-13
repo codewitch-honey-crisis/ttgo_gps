@@ -60,7 +60,7 @@ void setup() {
     ttgo_initialize();
     // landscape mode, buttons on right
     lcd.rotation(1);
-    
+    draw_center_text("GPS doodad",(lcd.dimensions().height-35)/2,35);
     // set the button callbacks 
     // (already initialized via ttgo_initialize())
     //button_a.on_click(on_click_handler);
