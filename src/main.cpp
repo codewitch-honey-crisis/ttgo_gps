@@ -45,7 +45,7 @@ static void draw_center_text(const char* text, int y, int size=30) {
                                 oti.scale).bounds();
     // center what we got back
     txtr.center_horizontal_inplace((srect16)frame_buffer.bounds());
-    txtr.offset(0,y);
+    txtr.offset_inplace(0,y);
     // draw it to the frame buffer
     draw::text(frame_buffer,txtr,oti,color_t::white);
     
