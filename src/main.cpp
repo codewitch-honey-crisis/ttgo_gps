@@ -1,8 +1,11 @@
 //includes
 #include <ttgo.hpp>
+#include <TinyGPSPlus.h>
+
 // downloaded from fontsquirrel.com and header generated with 
 // https://honeythecodewitch.com/gfx/generator
 #include <fonts/Telegrama.hpp>
+
 static const open_font& text_font = Telegrama;
 
 // the frame buffer used for double buffering
@@ -12,6 +15,9 @@ static uint8_t frame_buffer_data[
         {lcd_t::base_width,lcd_t::base_height}
     )
 ];
+
+// The TinyGPSPlus object
+TinyGPSPlus gps;
 
 // temporary string
 static char tmpsz[256];
@@ -53,7 +59,7 @@ void setup() {
     ttgo_initialize();
     // landscape mode, buttons on right
     lcd.rotation(1);
-
+    
     // set the button callbacks 
     // (already initialized via ttgo_initialize())
     //button_a.on_click(on_click_handler);
@@ -77,11 +83,15 @@ void loop() {
             frame_buffer,
             frame_buffer.bounds(),
             color_t::black);
-
+        if (gps.location.isValid()) {
+            snprintf(tmpsz,sizeof(tmpsz),"lat: %.2f",gps.location.lat());
+            draw_center_text(tmpsz,10);
+            snprintf(tmpsz,sizeof(tmpsz),"lng: %.2f",gps.location.lng());
+            draw_center_text(tmpsz,45);
+        }
         // draw the screen - to the frame buffer
-        draw_center_text("hello",10);
-        draw_center_text("hello 2",50);
-        draw_center_text("hello 3",90);
+        
+        
 
         // asynchronously send the frame buffer to the LCD (uses DMA)
         draw::bitmap_async(
