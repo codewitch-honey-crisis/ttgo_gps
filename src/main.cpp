@@ -72,7 +72,7 @@ void loop() {
         frame_buffer_t frame_buffer(
             lcd.dimensions(),
             frame_buffer_data);
-        // clear it to purple
+        // clear it
         draw::filled_rectangle(
             frame_buffer,
             frame_buffer.bounds(),
