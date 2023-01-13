@@ -13,10 +13,8 @@ static uint8_t frame_buffer_data[
     )
 ];
 
-// temporary strings for formatting
-static char tmpsz1[256];
-static char tmpsz2[256];
-static char tmpsz3[256];
+// temporary string
+static char tmpsz[256];
 
 static uint32_t ts=0;
 
