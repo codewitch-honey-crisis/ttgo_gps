@@ -22,9 +22,6 @@ static uint32_t ts=0;
 
 // draw text in center of screen
 static void draw_center_text(const char* text, int y, int size=30) {
-    // finish any pending async draws
-    draw::wait_all_async(lcd);
-
     // get a bitmap over our frame buffer
     frame_buffer_t frame_buffer(
         lcd.dimensions(),
@@ -52,13 +49,9 @@ static void draw_center_text(const char* text, int y, int size=30) {
     txtr.offset(0,y);
     // draw it to the frame buffer
     draw::text(frame_buffer,txtr,oti,color_t::white);
-
-    // asynchronously send the frame buffer to the LCD (uses DMA)
-    draw::bitmap_async(
-                    lcd,
-                    lcd.bounds(),
-                    frame_buffer,
-                    frame_buffer.bounds());
+    
+    
+    
 }
 
 void setup() {
@@ -80,7 +73,24 @@ void loop() {
     // ten times a second...
     if(ms>ts+100) {
         ts = ms;
-        
+        // finish any pending async draws
+        draw::wait_all_async(lcd);
+        // get a bitmap over our frame buffer
+            frame_buffer_t frame_buffer(
+                lcd.dimensions(),
+                frame_buffer_data);
+
+        // draw the screen - to the frame buffer
+        draw_center_text("hello",10);
+        draw_center_text("hello 2",50);
+        draw_center_text("hello 3",90);
+
+        // asynchronously send the frame buffer to the LCD (uses DMA)
+        draw::bitmap_async(
+                    lcd,
+                    lcd.bounds(),
+                    frame_buffer,
+                    frame_buffer.bounds());
     }
     // we don't use the dimmer, so make sure it doesn't timeout
     dimmer.wake();
