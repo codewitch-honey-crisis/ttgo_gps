@@ -75,6 +75,7 @@ void setup() {
 }
 void loop() {
     while(Serial2.available()) {
+        Serial.print(".");
         gps.encode((char)Serial2.read());
     }
     // trivial timer
