@@ -24,12 +24,7 @@ static void draw_center_text(const char* text, int y, int size=30) {
     frame_buffer_t frame_buffer(
         lcd.dimensions(),
         frame_buffer_data);
-    // clear it to purple
-    draw::filled_rectangle(
-        frame_buffer,
-        frame_buffer.bounds(),
-        color_t::black);
-
+    
     // fill the text structure
     open_text_info oti;
     oti.font = &text_font;
@@ -74,9 +69,14 @@ void loop() {
         // finish any pending async draws
         draw::wait_all_async(lcd);
         // get a bitmap over our frame buffer
-            frame_buffer_t frame_buffer(
-                lcd.dimensions(),
-                frame_buffer_data);
+        frame_buffer_t frame_buffer(
+            lcd.dimensions(),
+            frame_buffer_data);
+        // clear it to purple
+        draw::filled_rectangle(
+            frame_buffer,
+            frame_buffer.bounds(),
+            color_t::black);
 
         // draw the screen - to the frame buffer
         draw_center_text("hello",10);
