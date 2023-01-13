@@ -74,15 +74,16 @@ void setup() {
     
 }
 void loop() {
-    while(Serial2.available()) {
-        Serial.print(".");
-        gps.encode((char)Serial2.read());
-    }
     // trivial timer
     uint32_t ms = millis();
     // ten times a second...
     if(ms>ts+100) {
         ts = ms;
+    
+        while(Serial2.available()) {
+            gps.encode((char)Serial2.read());
+        }
+        
         // finish any pending async draws
         draw::wait_all_async(lcd);
         // get a bitmap over our frame buffer
