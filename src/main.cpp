@@ -78,27 +78,26 @@ void loop() {
         frame_buffer_t frame_buffer(
             lcd.dimensions(),
             frame_buffer_data);
-        // clear it
-        draw::filled_rectangle(
-            frame_buffer,
-            frame_buffer.bounds(),
-            color_t::black);
+        
         if (gps.location.isValid()) {
+            // draw the screen - to the frame buffer
+            // clear it
+            draw::filled_rectangle(
+                frame_buffer,
+                frame_buffer.bounds(),
+                color_t::black);
+            
             snprintf(tmpsz,sizeof(tmpsz),"lat: %.2f",gps.location.lat());
             draw_center_text(tmpsz,10);
             snprintf(tmpsz,sizeof(tmpsz),"lng: %.2f",gps.location.lng());
             draw_center_text(tmpsz,45);
+            // asynchronously send the frame buffer to the LCD (uses DMA)
+            draw::bitmap_async(
+                        lcd,
+                        lcd.bounds(),
+                        frame_buffer,
+                        frame_buffer.bounds());
         }
-        // draw the screen - to the frame buffer
-        
-        
-
-        // asynchronously send the frame buffer to the LCD (uses DMA)
-        draw::bitmap_async(
-                    lcd,
-                    lcd.bounds(),
-                    frame_buffer,
-                    frame_buffer.bounds());
     }
     // we don't use the dimmer, so make sure it doesn't timeout
     dimmer.wake();
