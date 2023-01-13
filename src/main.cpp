@@ -60,7 +60,13 @@ void setup() {
     ttgo_initialize();
     // landscape mode, buttons on right
     lcd.rotation(1);
+    // get a bitmap over our frame buffer
+    frame_buffer_t frame_buffer(
+        lcd.dimensions(),
+        frame_buffer_data);
+    draw::filled_rectangle(frame_buffer,frame_buffer.bounds(),color_t::orange);
     draw_center_text("GPS doodad",(lcd.dimensions().height-35)/2,35);
+    draw::bitmap_async(lcd,lcd.bounds(),frame_buffer,frame_buffer.bounds());
     // set the button callbacks 
     // (already initialized via ttgo_initialize())
     //button_a.on_click(on_click_handler);
