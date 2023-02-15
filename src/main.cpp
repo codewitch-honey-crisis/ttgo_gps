@@ -1,7 +1,7 @@
 //includes
 #include <ttgo.hpp>
 #include <TinyGPSPlus.h>
-
+#include <draw_util.hpp>
 // downloaded from fontsquirrel.com and header generated with 
 // https://honeythecodewitch.com/gfx/generator
 #include <fonts/Telegrama.hpp>
@@ -24,38 +24,8 @@ static char tmpsz[256];
 
 static uint32_t ts=0;
 
-// draw text in center of screen
-static void draw_center_text(const char* text, int y, int size=30) {
-    // get a bitmap over our frame buffer
-    frame_buffer_t frame_buffer(
-        lcd.dimensions(),
-        frame_buffer_data);
-    
-    // fill the text structure
-    open_text_info oti;
-    oti.font = &text_font;
-    oti.text = text;
-    // scale the font to the right line height
-    oti.scale = oti.font->scale(size);
-    // measure the text
-    srect16 txtr = oti.font->measure_text(
-                                ssize16::max(),
-                                spoint16::zero(),
-                                oti.text,
-                                oti.scale).bounds();
-    // center what we got back
-    txtr.center_horizontal_inplace((srect16)frame_buffer.bounds());
-    txtr.offset_inplace(0,y);
-    // draw it to the frame buffer
-    draw::text(frame_buffer,txtr,oti,color_t::white);
-    
-    
-    
-}
-
 void setup() {
     Serial.begin(115200);
-    Serial2.begin(9800,SERIAL_8N1,13,-1);
     // init the ttgo
     ttgo_initialize();
     // landscape mode, buttons on right
@@ -64,8 +34,8 @@ void setup() {
     frame_buffer_t frame_buffer(
         lcd.dimensions(),
         frame_buffer_data);
-    draw::filled_rectangle(frame_buffer,frame_buffer.bounds(),color_t::orange);
-    draw_center_text("GPS doodad",(lcd.dimensions().height-35)/2,35);
+    draw::filled_rectangle(frame_buffer,frame_buffer.bounds(),color_t::black);
+    ring_meter(frame_buffer,100,0,120,25,15,100,"km/h",Telegrama,3);
     draw::bitmap_async(lcd,lcd.bounds(),frame_buffer,frame_buffer.bounds());
     // set the button callbacks 
     // (already initialized via ttgo_initialize())
@@ -74,48 +44,7 @@ void setup() {
     
 }
 void loop() {
-    // trivial timer
-    uint32_t ms = millis();
-    // ten times a second...
-    if(ms>ts+100) {
-        ts = ms;
-        int i = Serial2.read();
-        while(i!=-1) {
-            if(i=='$') {
-                Serial.println();
-            }
-            Serial.print((char)i);
-            gps.encode((char)i);
-            i = Serial2.read();
-        }
-        
-        // finish any pending async draws
-        draw::wait_all_async(lcd);
-        // get a bitmap over our frame buffer
-        frame_buffer_t frame_buffer(
-            lcd.dimensions(),
-            frame_buffer_data);
-        
-        if (gps.location.isUpdated()) {
-            // draw the screen - to the frame buffer
-            // clear it
-            draw::filled_rectangle(
-                frame_buffer,
-                frame_buffer.bounds(),
-                color_t::black);
-            
-            snprintf(tmpsz,sizeof(tmpsz),"lat: %.2f",gps.location.lat());
-            draw_center_text(tmpsz,10);
-            snprintf(tmpsz,sizeof(tmpsz),"lng: %.2f",gps.location.lng());
-            draw_center_text(tmpsz,45);
-            // asynchronously send the frame buffer to the LCD (uses DMA)
-            draw::bitmap_async(
-                        lcd,
-                        lcd.bounds(),
-                        frame_buffer,
-                        frame_buffer.bounds());
-        }
-    }
+  
     // we don't use the dimmer, so make sure it doesn't timeout
     dimmer.wake();
     // give the TTGO hardware a chance to process
